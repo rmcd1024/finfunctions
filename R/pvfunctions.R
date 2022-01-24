@@ -59,13 +59,13 @@
 #' @export
 pv <- function(rate, nper, pymt, fvamt = 0) {
     pv <- pymt/rate*(1-(1+rate)^(-nper)) + fvamt*(1+rate)^(-nper)
-    pv
+    -pv
 }
 
 #' @export
 fv <- function(rate, nper, pymt, pvamt = 0) {
     fv <- pymt/rate*((1+rate)^nper - 1) + pvamt*(1+rate)^nper
-    fv
+    -fv
 }
 
 #' @export
@@ -86,22 +86,24 @@ irr <- function(values, lower = -0.5, upper = 1.5) {
 
 #' @export
 pmt <- function(rate, nper, pvamt, fvamt = 0) {
-    pmt <- (pvamt - fvamt*(1+rate)^(-nper))*
+    ## need to make a bigger payment if there is to be an FV residual
+    pmt <- (pvamt + fvamt*(1+rate)^(-nper))*
         rate*(1+rate)^nper/((1+rate)^nper-1)
-    pmt
+    -pmt
 }
 
 #' @export
 ipmt <- function(rate, period, nper, pvamt, fvamt = 0) {
-    pymt <- pmt(rate, nper, pvamt, -fvamt)
-    interest <- pv(rate, nper-period+1, pymt, -fvamt)*rate
-    interest
+    pymt <- pmt(rate, nper, pvamt, fvamt)
+    interest <- pv(rate, nper-period+1, pymt, fvamt)*rate
+    -interest
 }
 
 #' @export
 ppmt <- function(rate, period, nper, pvamt, fvamt = 0) {
-    pymt <- pmt(rate, nper, pvamt, -fvamt)
-    principal <- pymt - ipmt(rate, period, nper, pvamt, -fvamt)
-    principal
+    pymt <- pmt(rate, nper, pvamt, fvamt)
+    principal <- pymt - ipmt(rate, period, nper, pvamt, fvamt)
+    ## don't need negative because pymt is negative
+    principal 
 }
 
