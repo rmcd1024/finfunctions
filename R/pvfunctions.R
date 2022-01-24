@@ -1,8 +1,8 @@
 #' @title pvfunctions
 #'
 #' @description Experimental implemention of basic present value spreadsheet
-#'     functions. The functions `pv`, `fv`, `pmt`, ipmt`, `ppmt`, deal
-#'     with annuities (reqularly repeating payments). The The function
+#'     functions. The functions `pv`, `fv`, `pmt`, `ipmt`, `ppmt`, deal
+#'     with annuities (reqularly repeating payments). The functions
 #'     `irr` and `npv` deal with unequal cash flows, with `npv`
 #'     assuming the first payment occurs in one period. Specifically,
 #' * `pv` and `fv` compute the present and future value of an
@@ -14,7 +14,7 @@
 #'     payment, and for any given payment the breakdown between
 #'     interest and principal
 #' * `npv` and `irr` accept a vector as input to handle cash flows that are not annuities.
-#' * These functions may not adhere to the sign conventions a spreadsheet user would expect. You may consider this a bug
+#' * These functions should adhere to the sign conventions a spreadsheet user would expect. 
 #'
 #'
 #' \code{pv(rate,nper,pymt,0 )}
@@ -22,7 +22,7 @@
 #' \code{fv(rate,nper,pymt,0 )}
 #' \code{fv(rate,nper,pymt,pvamt)}
 #' \code{npv(rate,values )}
-#' \code{irr(values2, lower = -0.5, upper = 1.5)}
+#' \code{irr(values2, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)}
 #' \code{pmt(rate,nper,pvamt, fvamt=0)}
 #' \code{ipmt(rate, period, nper, pvamt)}
 #' \code{ppmt(rate, period,nper, pvamt)}
@@ -40,13 +40,13 @@
 #' @param values vector of payments
 #' @param lower lower bound of search for irr
 #' @param upper upper bound of search for irr
-#'
+#' @param tolerance convergence tolerance for irr. Set to `uniroot` default
 #' @aliases pv fv npv irr pmt ipmt ppmt
 #'
 #' @usage
 #' pv(rate,nper,pymt,fvamt)
 #' npv(rate, values)
-#' irr(values, lower = -0.5, upper = 1.5)
+#' irr(values, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)
 #' pmt(rate,nper,pvamt, fvamt)
 #' ipmt(rate, period, nper, pvamt, fvamt)
 #' ppmt(rate, period,nper, pvamt, fvamt)
@@ -78,9 +78,10 @@ npv <- function(rate, values) {
 }
 
 #' @export
-irr <- function(values, lower = -0.5, upper = 1.5) {
+irr <- function(values, lower = -0.5, upper = 1.5,
+    tolerance = .Machine$double.eps^0.25) {
     y <- uniroot(function(x) sum(values/(1+x)^(1:length(values))),
-                 lower = lower, upper = upper)
+                 lower = lower, upper = upper, tol = tolerance)
     y$root
 }
 
