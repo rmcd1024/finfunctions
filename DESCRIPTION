@@ -1,0 +1,11 @@
+Package: finfunctions
+Title: Implement simple spreadsheet present value functions
+Version: 0.0.0.9000
+Authors@R: 
+    person("Rober", "McDonald", , "rmcd1024@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package implements a small number of commonly-used spreadsheet functions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
