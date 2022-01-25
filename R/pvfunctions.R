@@ -18,13 +18,21 @@
 #'
 #'
 #' \code{pv(rate,nper,pymt,0 )}
+#'
 #' \code{pv(rate,nper,pymt,fvamt)}
+#'
 #' \code{fv(rate,nper,pymt,0 )}
+#'
 #' \code{fv(rate,nper,pymt,pvamt)}
+#'
 #' \code{npv(rate,values )}
+#'
 #' \code{irr(values2, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)}
+#'
 #' \code{pmt(rate,nper,pvamt, fvamt=0)}
+#'
 #' \code{ipmt(rate, period, nper, pvamt)}
+#'
 #' \code{ppmt(rate, period,nper, pvamt)}
 #'
 #' @name pvfunctions
