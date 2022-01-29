@@ -17,15 +17,15 @@
 #' * These functions should adhere to the sign conventions a spreadsheet user would expect. 
 #'
 #'
-#' \code{pv(rate,nper,pymt,0 )}
+#' \code{pv(rate,nper,pymt,0)}
 #'
 #' \code{pv(rate,nper,pymt,fvamt)}
 #'
-#' \code{fv(rate,nper,pymt,0 )}
+#' \code{fv(rate,nper,pymt,0)}
 #'
 #' \code{fv(rate,nper,pymt,pvamt)}
 #'
-#' \code{npv(rate,values )}
+#' \code{npv(rate,values)}
 #'
 #' \code{irr(values2, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)}
 #'
@@ -53,6 +53,7 @@
 #'
 #' @usage
 #' pv(rate,nper,pymt,fvamt)
+#' fv(rate,nper,pymt,pvamt)
 #' npv(rate, values)
 #' irr(values, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)
 #' pmt(rate,nper,pvamt, fvamt)
@@ -80,7 +81,6 @@ fv <- function(rate, nper, pymt, pvamt = 0) {
 npv <- function(rate, values) {
     ## Assumes equally-spaced payments
     tt <- 1:length(values)
-    print(tt)
     npv <- sum(values*(1+rate)^(-tt))
     npv
 }
