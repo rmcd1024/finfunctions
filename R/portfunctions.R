@@ -32,15 +32,15 @@ frontier <- function(er, vcv, ticks = NULL, rp = seq(0, .25, by = .005)) {
 plotfrontier <- function(er, vcv, ticks = NULL, labelxadj = 0.0125, labelyadj = 0,
                          rp = seq(0, .15, by = .005)) {
     f <- frontier(er,  vcv,  ticks, rp)
-    minvar  <- tibble(rp = f$rp,  v = f$v, sd = f$sd)
-    stkinfo <- tibble(means = f$er,  vars = diag(f$vcv),
+    minvar  <- data.frame(rp = f$rp,  v = f$v, sd = f$sd)
+    stkinfo <- data.frame(means = f$er,  vars = diag(f$vcv),
                       sd = sqrt(diag(f$vcv)), nms = f$symbol)
-    p <- ggplot(minvar,  aes(x = sd,  y = rp)) +
-        geom_point() +
-        geom_path() +
-        geom_point(data = stkinfo,
-                   aes(x = sd, y = means), cex = 5) +
-        annotate('text', label = stkinfo$nms, x = stkinfo$sd+0.1, #labelxadj*max(f$v),
+    p <- ggplot2::ggplot(minvar,  ggplot2::aes(x = sd,  y = rp)) +
+        ggplot2::geom_point() +
+        ggplot2::geom_path() +
+        ggplot2::geom_point(data = stkinfo,
+                   ggplot2::aes(x = sd, y = means), cex = 5) +
+        ggplot2::annotate('text', label = stkinfo$nms, x = stkinfo$sd+0.1, #labelxadj*max(f$v),
                  y = stkinfo$means, cex = 7)
     return(list(plot = p,  frontier_info = f))
 }
