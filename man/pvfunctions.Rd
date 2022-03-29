@@ -11,12 +11,13 @@
 \alias{ppmt}
 \title{pvfunctions}
 \usage{
-pv(rate,nper,pymt,fvamt)
+pv(rate, nper, pymt, fvamt, type)
+fv(rate, nper, pymt, pvamt, type)
 npv(rate, values)
 irr(values, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)
-pmt(rate,nper,pvamt, fvamt)
-ipmt(rate, period, nper, pvamt, fvamt)
-ppmt(rate, period,nper, pvamt, fvamt)
+pmt(rate, nper, pvamt, fvamt, type)
+ipmt(rate, period, nper, pvamt, fvamt, type)
+ppmt(rate, period,nper, pvamt, fvamt, type)
 }
 \arguments{
 \item{rate}{effective per-period interest rate}
@@ -28,7 +29,12 @@ ppmt(rate, period,nper, pvamt, fvamt)
 \item{fvamt}{future value amount not accounted for by periodic
 payment.}
 
-\item{pvamt}{present amount (e.g. amt to be annuitized); in case of \code{FV}, specifies current amount paid on annuity}
+\item{type}{whether payments are beginning or end of period. Note
+that \code{fvamt} and \code{pvamt} are assumed already adjusted to have
+the specified timing within the period.}
+
+\item{pvamt}{present amount (e.g. amt to be annuitized); in case of
+\code{FV}, specifies current amount paid on annuity}
 
 \item{period}{specific period for which calculation is to be
 performed (e.g. interest component of annuity)}
@@ -39,7 +45,8 @@ performed (e.g. interest component of annuity)}
 
 \item{upper}{upper bound of search for irr}
 
-\item{tolerance}{convergence tolerance for irr. Set to \code{uniroot} default}
+\item{tolerance}{convergence tolerance for irr. Set to \code{uniroot}
+default}
 }
 \description{
 Experimental implemention of basic present value spreadsheet
@@ -60,14 +67,22 @@ interest and principal
 \item These functions should adhere to the sign conventions a spreadsheet user would expect.
 }
 
-\code{pv(rate,nper,pymt,0 )}
-\code{pv(rate,nper,pymt,fvamt)}
-\code{fv(rate,nper,pymt,0 )}
-\code{fv(rate,nper,pymt,pvamt)}
-\code{npv(rate,values )}
+\code{pv(rate,nper,pymt,fvamt,type)}
+
+\code{pv(rate,nper,pymt,fvamt,type)}
+
+\code{fv(rate,nper,pymt,0,type)}
+
+\code{fv(rate,nper,pymt,pvamt,type)}
+
+\code{npv(rate,values)}
+
 \code{irr(values2, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)}
+
 \code{pmt(rate,nper,pvamt, fvamt=0)}
+
 \code{ipmt(rate, period, nper, pvamt)}
+
 \code{ppmt(rate, period,nper, pvamt)}
 }
 \details{

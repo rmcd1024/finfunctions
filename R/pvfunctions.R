@@ -17,13 +17,13 @@
 #' * These functions should adhere to the sign conventions a spreadsheet user would expect. 
 #'
 #'
-#' \code{pv(rate,nper,pymt,0)}
+#' \code{pv(rate,nper,pymt,fvamt,type)}
 #'
-#' \code{pv(rate,nper,pymt,fvamt)}
+#' \code{pv(rate,nper,pymt,fvamt,type)}
 #'
-#' \code{fv(rate,nper,pymt,0)}
+#' \code{fv(rate,nper,pymt,0,type)}
 #'
-#' \code{fv(rate,nper,pymt,pvamt)}
+#' \code{fv(rate,nper,pymt,pvamt,type)}
 #'
 #' \code{npv(rate,values)}
 #'
@@ -40,25 +40,30 @@
 #' @param rate effective per-period interest rate
 #' @param nper number of periods
 #' @param pymt periodic payment (e.g. annuity)
+#' @param type whether payments are beginning or end of period. Note
+#'     that `fvamt` and `pvamt` are assumed already adjusted to have
+#'     the specified timing within the period.
 #' @param fvamt future value amount not accounted for by periodic
-#'     payment. 
-#' @param pvamt present amount (e.g. amt to be annuitized); in case of `FV`, specifies current amount paid on annuity
+#'     payment.
+#' @param pvamt present amount (e.g. amt to be annuitized); in case of
+#'     `FV`, specifies current amount paid on annuity
 #' @param period specific period for which calculation is to be
 #'     performed (e.g. interest component of annuity)
 #' @param values vector of payments
 #' @param lower lower bound of search for irr
 #' @param upper upper bound of search for irr
-#' @param tolerance convergence tolerance for irr. Set to `uniroot` default
+#' @param tolerance convergence tolerance for irr. Set to `uniroot`
+#'     default
 #' @aliases pv fv npv irr pmt ipmt ppmt
 #'
 #' @usage
-#' pv(rate,nper,pymt,fvamt)
-#' fv(rate,nper,pymt,pvamt)
+#' pv(rate, nper, pymt, fvamt, type)
+#' fv(rate, nper, pymt, pvamt, type)
 #' npv(rate, values)
 #' irr(values, lower = -0.5, upper = 1.5, tolerance = .Machine$double.eps^0.25)
-#' pmt(rate,nper,pvamt, fvamt)
-#' ipmt(rate, period, nper, pvamt, fvamt)
-#' ppmt(rate, period,nper, pvamt, fvamt)
+#' pmt(rate, nper, pvamt, fvamt, type)
+#' ipmt(rate, period, nper, pvamt, fvamt, type)
+#' ppmt(rate, period,nper, pvamt, fvamt, type)
 #'
 #' @details These functions (mostly) mimic the behavior of the
 #'     standard basic financial function in Excel, Google Sheets, and
@@ -66,14 +71,16 @@
 #'     vectorized.
 
 #' @export
-pv <- function(rate, nper, pymt, fvamt = 0) {
-    pv <- pymt/rate*(1-(1+rate)^(-nper)) + fvamt*(1+rate)^(-nper)
+pv <- function(rate, nper, pymt, fvamt = 0, type=0) {
+    pv <- (1+rate*type)*pymt/rate*(1-(1+rate)^(-nper)) + 
+      fvamt*(1+rate)^(-nper)
     -pv
 }
 
 #' @export
-fv <- function(rate, nper, pymt, pvamt = 0) {
-    fv <- pymt/rate*((1+rate)^nper - 1) + pvamt*(1+rate)^nper
+fv <- function(rate, nper, pymt, pvamt = 0, type = 0) {
+    fv <- (1+rate*type)*pymt/rate*((1+rate)^nper - 1) + 
+      pvamt*(1+rate)^nper
     -fv
 }
 
@@ -94,24 +101,24 @@ irr <- function(values, lower = -0.5, upper = 1.5,
 }
 
 #' @export
-pmt <- function(rate, nper, pvamt, fvamt = 0) {
+pmt <- function(rate, nper, pvamt, fvamt = 0, type = 0) {
     ## need to make a bigger payment if there is to be an FV residual
-    pmt <- (pvamt + fvamt*(1+rate)^(-nper))*
-        rate*(1+rate)^nper/((1+rate)^nper-1)
+    pmt <- ((pvamt + fvamt*(1+rate)^(-nper))*
+        rate*(1+rate)^nper/((1+rate)^nper-1))/(1+rate*type)
     -pmt
 }
 
 #' @export
-ipmt <- function(rate, period, nper, pvamt, fvamt = 0) {
-    pymt <- pmt(rate, nper, pvamt, fvamt)
-    interest <- pv(rate, nper-period+1, pymt, fvamt)*rate
+ipmt <- function(rate, period, nper, pvamt, fvamt = 0, type = 0) {
+    pymt <- pmt(rate, nper, pvamt, fvamt, type)
+    interest <- pv(rate, nper-period+1, pymt, fvamt, type)*rate/(1+rate*type)
     -interest
 }
 
 #' @export
-ppmt <- function(rate, period, nper, pvamt, fvamt = 0) {
-    pymt <- pmt(rate, nper, pvamt, fvamt)
-    principal <- pymt - ipmt(rate, period, nper, pvamt, fvamt)
+ppmt <- function(rate, period, nper, pvamt, fvamt = 0, type = 0) {
+    pymt <- pmt(rate, nper, pvamt, fvamt, type)
+    principal <- pymt - ipmt(rate, period, nper, pvamt, fvamt, type)
     ## don't need negative because pymt is negative
     principal 
 }
